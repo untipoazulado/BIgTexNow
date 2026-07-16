@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Control BIG TEXT NOW</title>
+<link rel="stylesheet" href="css/control.css">
+</head>
+<body>
+
+<div class="header-row">
+    <h2 data-lang="title">Control BIG TEXT NOW</h2>
+    <select id="language" onchange="cambiarIdioma(this.value)">
+        <option value="es">🇪🇸 ES</option>
+        <option value="en">🇺🇸 EN</option>
+    </select>
+</div>
+
+<label data-lang="text_label">Texto</label>
+<input type="text" id="texto">
+
+<label data-lang="anim_in">Animación Entrada</label>
+<select id="entrada">
+    <option value="impacto">Impacto</option>
+    <option value="fade">Fade</option>
+    <option value="zoom">Zoom</option>
+    <option value="caida">Caída</option>
+    <option value="disco">Disco (Giro)</option>
+    <option value="glitch">Glitch Digital</option>
+    <option value="elastico">Súper Elástico</option>
+    <option value="maquina">Máquina de Escribir</option>
+    <option value="remolino">Remolino</option>
+    <option value="enfoque">Enfoque Suave</option>
+</select>
+
+<label data-lang="anim_out">Animación Salida</label>
+<select id="salida">
+    <option value="fadeUp">Fade Arriba</option>
+    <option value="zoomOut">Zoom Out</option>
+    <option value="explode">Explosión</option>
+    <option value="deslizar">Deslizar Rápido</option>
+    <option value="cortina">Cortina</option>
+    <option value="agujero">Agujero Negro</option>
+    <option value="cohete">Cohete (Arriba)</option>
+</select>
+
+<label data-lang="anim_loop">Animación Permanente (Loop)</label>
+<select id="permanente">
+    <option value="ninguna">Ninguna (Estático)</option>
+    <option value="latido">Latido (Pulse)</option>
+    <option value="temblor">Temblor (Shake)</option>
+    <option value="sacudir">Sacudir (Terremoto)</option>
+    <option value="onda">Onda (Wave)</option>
+    <option value="flotar">Flotar Suave</option>
+    <option value="flotar_agresivo">Flotar Agresivo (Estilo Canva)</option>
+    <option value="giro3d">Giro 3D Lento</option>
+    <option value="balanceo">Balanceo</option>
+</select>
+
+<label data-lang="intensity">Intensidad Animación (1x - 3x)</label>
+<input type="range" id="intensidad" min="0.5" max="3" step="0.1" value="1">
+
+<details class="opciones-extra">
+    <summary data-lang="more_opts">Más Opciones (Color, Estilo, Fuente)</summary>
+    <div class="contenido-extra">
+        <label data-lang="color_label">Color Base</label>
+        <input type="color" id="colorTexto" value="#ffffff" oninput="actualizarColorInput(this)">
+
+        <label data-lang="style_label">Estilo Visual</label>
+        <select id="estilo">
+            <option value="normal">Normal (Plano)</option>
+            <option value="neon">Neón Party (Brillo)</option>
+            <option value="fuego">Fuego Intenso</option>
+            <option value="arcoiris">Arcoíris</option>
+            <option value="tresd">3D Pop</option>
+            <option value="cyber">Cyberpunk</option>
+            <option value="comic">Cómic (Borde Negro)</option>
+            <option value="elegante">Elegante (Dorado)</option>
+            <option value="metal">Metálico</option>
+            <option value="retro">Retro (Vaporwave)</option>
+            <option value="hielo">Hielo (Frozen)</option>
+            <option value="terror">Terror (Sangre)</option>
+        </select>
+
+        <label data-lang="size_label">Tamaño Fuente</label>
+        <select id="tamano">
+            <option value="auto">Automático (Ajustable)</option>
+            <option value="300">Gigante (300px)</option>
+            <option value="200">Grande (200px)</option>
+            <option value="150">Mediano (150px)</option>
+            <option value="100">Pequeño (100px)</option>
+            <option value="60">Texto Largo (60px)</option>
+        </select>
+
+        <label data-lang="font_label">Tipografía (Fuente)</label>
+        <select id="fuente">
+            <option value="default">Por Defecto (Sistema)</option>
+            <option value="'Arial Black', Gadget, sans-serif">Gruesa (Arial Black)</option>
+            <option value="'Courier New', Courier, monospace">Máquina (Courier)</option>
+            <option value="'Brush Script MT', cursive">Manuscrita (Script)</option>
+            <option value="'Times New Roman', Times, serif">Clásica (Serif)</option>
+            <option value="Impact, Charcoal, sans-serif">Impacto (Meme)</option>
+            <option value="'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif">Divertida (Comic)</option>
+            <option value="'Verdana', Geneva, sans-serif">Ancha (Verdana)</option>
+        </select>
+    </div>
+</details>
+
+<button onclick="mostrar()" data-lang="btn_show">Mostrar</button>
+<button onclick="ocultar()" data-lang="btn_hide">Ocultar</button>
+
+<div class="separator"></div>
+
+<h3 data-lang="saved_phrases">Frases Guardadas</h3>
+<div id="presets-container">
+    <div class="preset-row">
+        <input type="text" id="preset1" placeholder="Frase 1" oninput="guardarPreset(1)">
+        <button class="btn-small" onclick="cargarPreset(1)" data-lang="btn_load">Cargar</button>
+    </div>
+    <div class="preset-row">
+        <input type="text" id="preset2" placeholder="Frase 2" oninput="guardarPreset(2)">
+        <button class="btn-small" onclick="cargarPreset(2)" data-lang="btn_load">Cargar</button>
+    </div>
+    <div class="preset-row">
+        <input type="text" id="preset3" placeholder="Frase 3" oninput="guardarPreset(3)">
+        <button class="btn-small" onclick="cargarPreset(3)" data-lang="btn_load">Cargar</button>
+    </div>
+    <div class="preset-row">
+        <input type="text" id="preset4" placeholder="Frase 4" oninput="guardarPreset(4)">
+        <button class="btn-small" onclick="cargarPreset(4)" data-lang="btn_load">Cargar</button>
+    </div>
+    <div class="preset-row">
+        <input type="text" id="preset5" placeholder="Frase 5" oninput="guardarPreset(5)">
+        <button class="btn-small" onclick="cargarPreset(5)" data-lang="btn_load">Cargar</button>
+    </div>
+</div>
+
+<button onclick="resetearTodo()" class="btn-reset" data-lang="btn_reset">Resetear Todo</button>
+
+<div class="footer" data-lang="footer">Desarrollado por Un Tipo Azulado con asistencia de IA</div>
+
+<script src="js/control.js"></script>
+</body>
+</html>

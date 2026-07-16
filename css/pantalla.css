@@ -1,0 +1,152 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: transparent; /* Importante para OBS */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#contenedor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#texto {
+    text-align: center;
+    color: white;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    word-wrap: break-word;
+    width: 90%; /* Ancho prudente para forzar salto de línea */
+    transition: color 0.3s ease;
+}
+
+.letra {
+    display: inline-block; /* Necesario para que GSAP pueda transformar (escalar/rotar) cada letra */
+}
+
+.palabra {
+    display: inline-block;
+    white-space: nowrap; /* Evita que la palabra se rompa a la mitad */
+}
+
+/* --- ESTILOS VISUALES --- */
+
+/* Neón: Resplandor fuerte */
+.neon {
+    /* Efecto tubo de neón: Relleno transparente + Borde brillante */
+    -webkit-text-fill-color: white;
+    -webkit-text-stroke: 3px currentColor;
+    /* Usamos drop-shadow para que el brillo salga del borde (tubo) y no del relleno */
+    filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px currentColor) drop-shadow(0 0 15px currentColor) drop-shadow(0 0 30px currentColor);
+    text-shadow: none;
+}
+
+/* Fuego: Sombras naranjas y rojas hacia arriba */
+.fuego {
+    color: #ffcc00 !important; /* Forzamos amarillo base */
+    animation: fuego-anim 0.15s ease-in-out infinite alternate;
+}
+
+@keyframes fuego-anim {
+    0% { text-shadow: 0 -5px 4px #ff8800, 2px -10px 6px #ff3300, -2px -15px 11px #ff0000, 2px -25px 18px #880000; }
+    25% { text-shadow: -2px -6px 4px #ff8800, 0 -12px 6px #ff3300, 2px -18px 11px #ff0000, -1px -30px 20px #880000; }
+    50% { text-shadow: 2px -4px 4px #ff8800, -2px -8px 6px #ff3300, 0 -14px 11px #ff0000, 1px -22px 16px #880000; }
+    75% { text-shadow: -1px -7px 4px #ff8800, 2px -13px 6px #ff3300, -2px -20px 11px #ff0000, 0 -32px 22px #880000; }
+    100% { text-shadow: 0 -5px 4px #ff8800, 2px -10px 6px #ff3300, -2px -15px 11px #ff0000, 2px -25px 18px #880000; }
+}
+
+/* Arcoíris: Colores alternados en las letras */
+.arcoiris .letra:nth-child(1n) { color: #ff0000; text-shadow: 2px 2px 0px #000; }
+.arcoiris .letra:nth-child(2n) { color: #ff8800; text-shadow: 2px 2px 0px #000; }
+.arcoiris .letra:nth-child(3n) { color: #ffff00; text-shadow: 2px 2px 0px #000; }
+.arcoiris .letra:nth-child(4n) { color: #00ff00; text-shadow: 2px 2px 0px #000; }
+.arcoiris .letra:nth-child(5n) { color: #00ffff; text-shadow: 2px 2px 0px #000; }
+.arcoiris .letra:nth-child(6n) { color: #0000ff; text-shadow: 2px 2px 0px #000; }
+.arcoiris .letra:nth-child(7n) { color: #8800ff; text-shadow: 2px 2px 0px #000; }
+
+/* 3D Pop: Efecto de volumen estilo cómic */
+.tresd {
+    -webkit-text-stroke: 2px #000; /* Borde negro para definir */
+    text-shadow: 
+        1px 1px 0px #000, 2px 2px 0px #000, 3px 3px 0px #000, 
+        4px 4px 0px #000, 5px 5px 0px #000, 6px 6px 0px #000,
+        7px 7px 0px #000, 8px 8px 0px #000, 9px 9px 0px #000,
+        15px 15px 20px rgba(0,0,0,0.5); /* Sombra difusa al final */
+}
+
+/* Cyberpunk: Sombras cian y magenta */
+.cyber {
+    color: #fcee0a !important; /* Amarillo Cyber */
+    text-shadow: 
+        3px 3px 0px #ff00ff, 
+        -3px -3px 0px #00ffff;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro */
+    border: 3px solid #00ffff; /* Borde neón */
+    box-shadow: 0 0 20px #00ffff, inset 0 0 20px #00ffff;
+    padding: 15px;
+    width: auto !important; /* Ajustar al contenido */
+    display: inline-block;
+}
+
+/* Cómic: Borde negro grueso y color sólido */
+.comic {
+    -webkit-text-stroke: 2px black; /* Borde negro */
+    text-shadow: 3px 3px 0px rgba(0,0,0,0.5);
+    font-weight: 900;
+}
+
+/* Elegante: Dorado con sombra suave */
+.elegante {
+    color: #ffd700 !important; /* Oro forzado */
+    text-shadow: 
+        0px 2px 5px rgba(0,0,0,0.5),
+        0px 0px 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Metal: Gris plateado con brillo */
+.metal {
+    color: #e0e0e0 !important;
+    text-shadow: 
+        0px -1px 0px #fff,
+        0px 1px 0px #000,
+        0px 2px 2px rgba(0,0,0,0.6);
+}
+
+/* --- NUEVOS ESTILOS --- */
+
+/* Retro: Degradado Vaporwave */
+.retro {
+    background: linear-gradient(180deg, #00ffff 0%, #ff00ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important; /* Necesario para ver el degradado */
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(5px 5px 0px #000);
+}
+
+/* Hielo: Azul congelado */
+.hielo {
+    color: #e0ffff !important;
+    text-shadow: 
+        0 0 10px #fff,
+        0 0 20px #00ffff,
+        0 0 40px #0000ff;
+    -webkit-text-stroke: 2px #0055ff;
+}
+
+/* Terror: Sangre y oscuridad */
+.terror {
+    color: #8a0000 !important;
+    text-shadow: 
+        2px 2px 0px #000,
+        0 0 30px #ff0000;
+    -webkit-text-stroke: 1px #000;
+}
