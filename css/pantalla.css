@@ -150,3 +150,37 @@ body, html {
         0 0 30px #ff0000;
     -webkit-text-stroke: 1px #000;
 }
+
+/* --- SOPORTE EMOJIS --- */
+.letra.emoji {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+    font-weight: normal;
+    text-shadow: none !important;
+}
+
+/* Evitar que estilos que pintan o cambian el color de fondo rompan los emojis */
+.neon .emoji,
+.fuego .emoji,
+.arcoiris .emoji,
+.cyber .emoji,
+.elegante .emoji,
+.metal .emoji,
+.hielo .emoji,
+.terror .emoji,
+.tresd .emoji,
+.comic .emoji {
+    -webkit-text-fill-color: initial !important;
+    -webkit-text-stroke: initial !important;
+    color: initial !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+}
+
+.retro .emoji {
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    color: initial !important;
+    -webkit-text-fill-color: initial !important;
+}

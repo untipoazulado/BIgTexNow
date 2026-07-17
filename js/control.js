@@ -19,6 +19,8 @@ function mostrar(){
     const texto = document.getElementById("texto").value.toUpperCase();
     if(!texto) return; // Validación básica
 
+    const fuenteSeleccionada = document.getElementById("fuente").value;
+
     enviar({
         texto: texto,
         entrada: document.getElementById("entrada").value,
@@ -26,7 +28,7 @@ function mostrar(){
         permanente: document.getElementById("permanente").value,
         intensidad: document.getElementById("intensidad").value,
         tamano: document.getElementById("tamano").value,
-        fuente: document.getElementById("fuente").value,
+        fuente: fuenteSeleccionada,
         color: document.getElementById("colorTexto").value,
         estilo: document.getElementById("estilo").value,
         accion: "mostrar"
@@ -110,6 +112,8 @@ function resetearTodo() {
         document.getElementById("estilo").value = "normal";
         document.getElementById("tamano").value = "auto";
         document.getElementById("fuente").value = "default";
+        
+
 
         // Borrar la configuración guardada para que la próxima vez cargue los defaults del HTML
         localStorage.removeItem(CONTROL_STATE_KEY);
@@ -248,8 +252,270 @@ function cambiarIdioma(lang) {
     }
 }
 
+// --- Funciones del Selector de Emojis ---
+
+function toggleEmojiPicker(event) {
+    if (event) event.stopPropagation();
+    const picker = document.getElementById("emoji-picker");
+    picker.classList.toggle("hidden");
+}
+
+function switchEmojiTab(event, tabId) {
+    if (event) event.stopPropagation();
+    // Ocultar todas las cuadrículas
+    document.querySelectorAll(".emoji-grid").forEach(grid => grid.classList.add("hidden"));
+    // Mostrar la seleccionada
+    document.getElementById("tab-" + tabId).classList.remove("hidden");
+    
+    // Desactivar todas las pestañas
+    document.querySelectorAll(".emoji-picker-tabs .tab-btn").forEach(btn => btn.classList.remove("active"));
+    // Activar la pestaña clicada
+    if (event) event.currentTarget.classList.add("active");
+}
+
+function insertEmoji(emoji) {
+    const input = document.getElementById("texto");
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const text = input.value;
+    input.value = text.substring(0, start) + emoji + text.substring(end);
+    input.focus();
+    
+    // Posicionar el cursor justo después del emoji insertado
+    const newPos = start + emoji.length;
+    input.setSelectionRange(newPos, newPos);
+    
+    // Disparar eventos de input y change para guardar estado
+    input.dispatchEvent(new Event('input'));
+    guardarEstado();
+}
+
+
+
+// --- Detección de fuentes instaladas en el sistema ---
+const FONTS_CACHE_KEY = "bigTextNowInstalledFonts";
+
+const FONTS_TO_TEST = [
+    // Windows - Sans Serif
+    "Agency FB", "Algerian", "Arial", "Arial Black",
+    "Arial Narrow", "Arial Rounded MT Bold",
+    "Bahnschrift", "Calibri", "Calibri Light",
+    "Century Gothic", "Corbel", "Franklin Gothic Book",
+    "Franklin Gothic Demi", "Franklin Gothic Demi Cond",
+    "Franklin Gothic Heavy", "Franklin Gothic Medium",
+    "Gadugi", "Haettenschweiler", "Impact",
+    "Leelawadee", "Leelawadee UI",
+    "Lucida Sans", "Lucida Sans Unicode",
+    "Malgun Gothic", "Microsoft JhengHei",
+    "Microsoft Sans Serif", "Microsoft Tai Le",
+    "Microsoft YaHei", "Microsoft Yi Baiti",
+    "Microsoft Himalaya", "Microsoft New Tai Lue",
+    "Microsoft PhagsPa", "Microsoft Uighur",
+    "MingLiU", "MingLiU-ExtB",
+    "MS Gothic", "MS Mincho", "MS PGothic", "MS PMincho",
+    "MS Reference Sans Serif", "MS Reference Specialty",
+    "Myanmar Text", "Nirmala UI",
+    "PMingLiU", "PMingLiU-ExtB",
+    "Segoe MDL2 Assets", "Segoe Print", "Segoe Script",
+    "Segoe UI", "Segoe UI Emoji", "Segoe UI Historic",
+    "Segoe UI Light", "Segoe UI Semibold",
+    "Segoe UI Semilight", "Segoe UI Symbol",
+    "SimSun", "SimSun-ExtB",
+    "Sylfaen", "Tahoma",
+    "Trebuchet MS", "Tw Cen MT",
+    "Tw Cen MT Condensed", "Tw Cen MT Condensed Extra Bold",
+    "Verdana",
+    // Windows - Serif
+    "Baskerville Old Face", "Bell MT", "Book Antiqua",
+    "Bookman Old Style", "Californian FB",
+    "Cambria", "Castellar", "Century Schoolbook",
+    "Constantia", "Ebrima",
+    "Garamond", "Georgia",
+    "Gloucester MT Extra Condensed", "Goudy Old Style",
+    "Goudy Stout", "High Tower Text",
+    "Lucida Bright", "Palatino Linotype",
+    "Perpetua", "Perpetua Titling MT",
+    "Rockwell", "Rockwell Condensed", "Rockwell Extra Bold",
+    "Sitka Banner", "Sitka Display", "Sitka Heading",
+    "Sitka Small", "Sitka Subheading", "Sitka Text",
+    "Times New Roman",
+    // Windows - Mono
+    "Consolas", "Courier New", "Lucida Console",
+    "Lucida Sans Typewriter", "OCR A Extended",
+    // Windows - Script / Handwriting
+    "Blackadder ITC", "Bradley Hand ITC",
+    "Brush Script MT", "Curlz MT",
+    "Edwardian Script ITC", "Freestyle Script",
+    "French Script MT", "Harlow Solid Italic",
+    "Jokerman", "Juice ITC", "Kristen ITC",
+    "Kunstler Script", "Lucida Calligraphy",
+    "Lucida Handwriting", "Magneto",
+    "Matura MT Script Capitals", "Mistral",
+    "Monotype Corsiva", "Old English Text MT",
+    "Palace Script MT", "Pristina",
+    "Rage Italic", "Ravie", "Script MT Bold",
+    "Snap ITC", "Viner Hand ITC", "Vivaldi",
+    "Vladimir Script",
+    // Windows - Display / Decorative
+    "Bauhaus 93", "Berlin Sans FB", "Berlin Sans FB Demi",
+    "Bernard MT Condensed", "Bodoni MT",
+    "Bodoni MT Black", "Bodoni MT Condensed",
+    "Bodoni MT Poster Compressed", "Britannic Bold",
+    "Broadway", "Colonna MT", "Cooper Black",
+    "Copperplate Gothic Bold", "Copperplate Gothic Light",
+    "Desdemona", "Elephant", "Engravers MT",
+    "Eras Bold ITC", "Eras Demi ITC",
+    "Eras Light ITC", "Eras Medium ITC",
+    "Felix Titling", "Footlight MT Light", "Forte",
+    "Gabriola", "Gill Sans MT",
+    "Gill Sans MT Condensed", "Gill Sans MT Ext Condensed Bold",
+    "Harrington", "Hobo Std",
+    "Imprint MT Shadow", "Informal Roman",
+    "Javanese Text", "Maiandra GD",
+    "Niagara Engraved", "Niagara Solid",
+    "Onyx", "Papyrus", "Parchment",
+    "Playbill", "Poor Richard",
+    "Sakkal Majalla", "Showcard Gothic",
+    "Stencil", "Tempus Sans ITC", "Wingdings",
+    "Wingdings 2", "Wingdings 3",
+    "Yu Gothic", "Yu Gothic Light", "Yu Gothic Medium",
+    "Yu Mincho", "Yu Mincho Demibold", "Yu Mincho Light",
+    // macOS
+    "Apple Color Emoji", "Apple SD Gothic Neo",
+    "Apple Chancery", "Apple Symbols",
+    "Ayuthaya", "Beirut",
+    "Bodoni 72", "Bradley Hand",
+    "Chalkboard", "Chalkboard SE", "Charter",
+    "Copperplate", "Didot",
+    "Futura", "Geneva", "Gill Sans",
+    "Helvetica", "Helvetica Neue",
+    "Hiragino Kaku Gothic ProN", "Hiragino Mincho ProN",
+    "Hiragino Sans", "Hoefler Text",
+    "Krungthep", "Lucida Grande",
+    "Marker Felt", "Menlo", "Monaco",
+    "Noteworthy", "Optima", "Palatino",
+    "Phosphate", "PingFang HK", "PingFang SC",
+    "PingFang TC", "Plantagenet Cherokee",
+    "Savoye LET", "Seravek", "Silom",
+    "Skia", "Snell Roundhand", "Sukhumvit Set",
+    "Thonburi", "Trattatello",
+    "Waseem", "Zapf Dingbats", "Zapfino",
+    // Linux / Multiplataforma
+    "Ubuntu", "Ubuntu Mono",
+    "Liberation Mono", "Liberation Sans", "Liberation Serif",
+    "DejaVu Sans Mono", "DejaVu Sans", "DejaVu Serif",
+    "Noto Mono", "Noto Sans", "Noto Serif",
+    "Noto Kufi Arabic", "Noto Naskh Arabic",
+    "Droid Sans Mono", "Droid Sans", "Droid Serif",
+    "FreeMono", "FreeSans", "FreeSerif",
+    "Open Sans", "Roboto", "Roboto Condensed",
+    "Roboto Mono", "Lato", "Montserrat",
+    "Oswald", "Raleway", "Merriweather",
+    "Playfair Display", "Source Sans Pro",
+    "Source Serif Pro", "Source Code Pro",
+    "Lora", "Inconsolata", "Poppins",
+    "Work Sans", "Exo", "Exo 2",
+    "Fira Sans", "Fira Mono", "Fira Code",
+    "Avenir", "Avenir Next", "DIN",
+    "DIN Condensed", "Eurostile", "Frutiger",
+    "Gotham", "Helvetica Now", "Minion Pro",
+    "Myriad Pro", "Optima", "Proxima Nova",
+    "Trade Gothic", "Univers", "Whitney"
+];
+
+function detectarFuentesInstaladas() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const testStr = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    ctx.font = "72px monospace";
+    const baseWidth = ctx.measureText(testStr).width;
+
+    const disponibles = [];
+    for (const fontName of FONTS_TO_TEST) {
+        try {
+            ctx.font = '72px "' + fontName + '", monospace';
+            const w = ctx.measureText(testStr).width;
+            if (w !== baseWidth) {
+                disponibles.push(fontName);
+            }
+        } catch (e) {
+            // Ignorar errores con nombres no válidos
+        }
+    }
+
+    localStorage.setItem(FONTS_CACHE_KEY, JSON.stringify(disponibles));
+    return disponibles;
+}
+
+function poblarSelectorFuentes() {
+    const select = document.getElementById("fuente");
+    if (!select) return;
+
+    // Obtener las fuentes ya representadas en las opciones hardcodeadas
+    const existentes = new Set();
+    Array.from(select.options).forEach(opt => {
+        if (opt.value && opt.value !== "default") {
+            const name = opt.value.replace(/['"]/g, "").split(",")[0].trim();
+            existentes.add(name.toLowerCase());
+        }
+    });
+
+    // Remover opciones de detección previa (las que NO contienen coma en su value)
+    const optionsToRemove = [];
+    Array.from(select.options).forEach(opt => {
+        if (opt.value && opt.value !== "default" && !opt.value.includes(",")) {
+            optionsToRemove.push(opt);
+        }
+    });
+    optionsToRemove.forEach(opt => opt.remove());
+
+    // Usar detección por lista predefinida
+    let fuentes = [];
+    const cached = localStorage.getItem(FONTS_CACHE_KEY);
+    if (cached) {
+        try { fuentes = JSON.parse(cached); } catch (e) { }
+    }
+    if (fuentes.length === 0) {
+        fuentes = detectarFuentesInstaladas();
+    }
+
+    // Filtrar fuentes que ya están en el select hardcodeado
+    const nuevas = fuentes.filter(f => !existentes.has(f.toLowerCase())).sort();
+
+    if (nuevas.length === 0) return;
+
+    // Separador visual (solo si hay fuentes hardcodeadas además de default)
+    if (select.options.length > 1) {
+        const sep = document.createElement("option");
+        sep.disabled = true;
+        sep.textContent = "─── Fuentes detectadas ───";
+        select.appendChild(sep);
+    }
+
+    // Agregar cada fuente detectada
+    for (const fontName of nuevas) {
+        const opt = document.createElement("option");
+        opt.value = '"' + fontName + '"';
+        opt.textContent = fontName;
+        select.appendChild(opt);
+    }
+}
+
+// Cerrar selector al hacer clic fuera
+document.addEventListener("click", (event) => {
+    const picker = document.getElementById("emoji-picker");
+    const trigger = document.getElementById("emoji-trigger-btn");
+    if (picker && !picker.classList.contains("hidden") && !picker.contains(event.target) && event.target !== trigger) {
+        picker.classList.add("hidden");
+    }
+});
+
 // Inicialización al cargar
 window.addEventListener("load", () => {
+    // 0. Poblar selector con fuentes del sistema detectadas
+    poblarSelectorFuentes();
+
     // 1. Cargar el estado guardado de los controles
     cargarEstado();
 
@@ -262,7 +528,6 @@ window.addEventListener("load", () => {
     // 2. Inicializar/actualizar visuales que no se restauran solo con .value
     actualizarColorInput(document.getElementById("colorTexto"));
 
-    // 3. Añadir listeners para guardar automáticamente cualquier cambio
     const idsParaGuardar = ['texto', 'entrada', 'salida', 'permanente', 'intensidad', 'colorTexto', 'estilo', 'tamano', 'fuente', 'language'];
     idsParaGuardar.forEach(id => {
         const el = document.getElementById(id);

@@ -3,9 +3,44 @@ const bc = new BroadcastChannel('obs_overlay_channel');
 let animacionSalida = "fadeUp";
 let lastTimestamp = 0;
 let loopAnimation = null; // Variable para controlar el inicio del loop
+const loadedFonts = new Set();
 
 // Configuración GSAP para evitar warnings en OBS
 gsap.config({ nullTargetWarn: false });
+
+function cargarGoogleFont(fontName) {
+    if (!fontName || fontName === "default") return;
+    
+    // Si ya fue cargada, no hacer nada
+    if (loadedFonts.has(fontName)) return;
+    
+    // Evitar cargar fuentes estándar locales o con comillas/múltiples palabras separadas por coma
+    if (fontName.includes(",") || fontName.includes("'") || fontName.includes('"')) {
+        return;
+    }
+    
+    // Normalizar el nombre para Google Fonts
+    const googleFontName = fontName.trim().replace(/\s+/g, "+");
+    
+    // Crear el elemento link para cargar la fuente
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?family=${googleFontName}:wght@400;700;800;900&display=swap`;
+    
+    document.head.appendChild(link);
+    loadedFonts.add(fontName);
+    
+    // Volver a ajustar tamaño cuando la fuente termine de descargar
+    link.onload = () => {
+        const item = localStorage.getItem(STORAGE_KEY);
+        if (item) {
+            const data = JSON.parse(item);
+            if (data && data.fuente === fontName) {
+                ajustarTamano(data.tamano);
+            }
+        }
+    };
+}
 
 function ajustarTamano(tamanoFijo){
     const texto = document.getElementById("texto");
@@ -52,6 +87,7 @@ function renderTexto(data){
     
     // Aplicar fuente
     if (data.fuente && data.fuente !== "default") {
+        cargarGoogleFont(data.fuente);
         cont.style.fontFamily = data.fuente;
     } else {
         cont.style.fontFamily = ""; // Restaurar por defecto
@@ -62,13 +98,32 @@ function renderTexto(data){
 
     // Dividir por palabras para respetar el wrapping
     const palabras = data.texto.split(" ");
+    
+    // Segmentador para dividir palabras en caracteres visuales (incluyendo emojis complejos)
+    let segmenter = null;
+    if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+        segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+    }
+
     palabras.forEach((palabra, index) => {
         const wordSpan = document.createElement("span");
         wordSpan.classList.add("palabra");
         
-        palabra.split("").forEach(char => {
+        // Obtener caracteres individuales de forma segura (graphemes)
+        const caracteres = segmenter 
+            ? Array.from(segmenter.segment(palabra)).map(s => s.segment)
+            : [...palabra];
+
+        caracteres.forEach(char => {
             const span = document.createElement("span");
             span.classList.add("letra");
+            
+            // Detectar si el caracter es un emoji para aplicar clase y estilos especiales
+            const esEmoji = /[\p{Extended_Pictographic}\p{Regional_Indicator}]/u.test(char);
+            if (esEmoji) {
+                span.classList.add("emoji");
+            }
+            
             span.textContent = char;
             wordSpan.appendChild(span);
         });
@@ -241,14 +296,16 @@ function animarSalida(){
             gsap.to(targets,
                 {opacity: 0, y: -50, duration: 0.4, stagger: 0.02, ease: "power2.in"}
             );
+            gsap.to(cont, {opacity: 0, duration: 0.4, ease: "power2.in"});
         break;
-
+ 
         case "zoomOut":
             gsap.to(targets,
                 {scale: 0, opacity: 0, duration: 0.4, stagger: 0.02, ease: "back.in(1.5)"}
             );
+            gsap.to(cont, {opacity: 0, duration: 0.4, ease: "power2.in"});
         break;
-
+ 
         case "explode":
             gsap.to(targets,
                 {
@@ -260,30 +317,35 @@ function animarSalida(){
                     ease: "power3.out"
                 }
             );
+            gsap.to(cont, {opacity: 0, duration: 0.6, ease: "power3.out"});
         break;
-
+ 
         case "deslizar":
             gsap.to(targets,
                 {x: 1000, opacity: 0, duration: 0.5, ease: "power2.in", stagger: 0.02}
             );
+            gsap.to(cont, {opacity: 0, duration: 0.5, ease: "power2.in"});
         break;
-
+ 
         case "cortina":
             gsap.to(targets,
                 {scaleY: 0, transformOrigin: "top", opacity: 0, duration: 0.4, stagger: 0.02}
             );
+            gsap.to(cont, {opacity: 0, duration: 0.4, ease: "power2.in"});
         break;
-
+ 
         case "agujero":
             gsap.to(targets,
                 {scale: 0, rotation: 180, opacity: 0, duration: 0.6, ease: "back.in(1)", stagger: 0.02}
             );
+            gsap.to(cont, {opacity: 0, duration: 0.6, ease: "power2.in"});
         break;
-
+ 
         case "cohete":
             gsap.to(targets,
                 {y: -1000, opacity: 0, duration: 0.6, ease: "power3.in", stagger: 0.02}
             );
+            gsap.to(cont, {opacity: 0, duration: 0.6, ease: "power3.in"});
         break;
     }
 }

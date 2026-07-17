@@ -16,7 +16,59 @@
 </div>
 
 <label data-lang="text_label">Texto</label>
-<input type="text" id="texto">
+<div class="input-emoji-container">
+    <input type="text" id="texto">
+    <button type="button" id="emoji-trigger-btn" class="emoji-trigger" onclick="toggleEmojiPicker(event)">😀</button>
+    <div id="emoji-picker" class="emoji-picker hidden">
+        <div class="emoji-picker-tabs">
+            <button type="button" class="tab-btn active" onclick="switchEmojiTab(event, 'recentes')">🔥</button>
+            <button type="button" class="tab-btn" onclick="switchEmojiTab(event, 'caras')">😀</button>
+            <button type="button" class="tab-btn" onclick="switchEmojiTab(event, 'simbolos')">✨</button>
+        </div>
+        <div class="emoji-grid" id="tab-recentes">
+            <span class="emoji-item" onclick="insertEmoji('🔥')">🔥</span>
+            <span class="emoji-item" onclick="insertEmoji('⭐')">⭐</span>
+            <span class="emoji-item" onclick="insertEmoji('✨')">✨</span>
+            <span class="emoji-item" onclick="insertEmoji('💥')">💥</span>
+            <span class="emoji-item" onclick="insertEmoji('🎉')">🎉</span>
+            <span class="emoji-item" onclick="insertEmoji('🚀')">🚀</span>
+            <span class="emoji-item" onclick="insertEmoji('👑')">👑</span>
+            <span class="emoji-item" onclick="insertEmoji('💯')">💯</span>
+            <span class="emoji-item" onclick="insertEmoji('🚨')">🚨</span>
+            <span class="emoji-item" onclick="insertEmoji('⚠️')">⚠️</span>
+            <span class="emoji-item" onclick="insertEmoji('🎮')">🎮</span>
+            <span class="emoji-item" onclick="insertEmoji('🎵')">🎵</span>
+        </div>
+        <div class="emoji-grid hidden" id="tab-caras">
+            <span class="emoji-item" onclick="insertEmoji('😀')">😀</span>
+            <span class="emoji-item" onclick="insertEmoji('😂')">😂</span>
+            <span class="emoji-item" onclick="insertEmoji('😍')">😍</span>
+            <span class="emoji-item" onclick="insertEmoji('😎')">😎</span>
+            <span class="emoji-item" onclick="insertEmoji('😜')">😜</span>
+            <span class="emoji-item" onclick="insertEmoji('🤔')">🤔</span>
+            <span class="emoji-item" onclick="insertEmoji('😱')">😱</span>
+            <span class="emoji-item" onclick="insertEmoji('💀')">💀</span>
+            <span class="emoji-item" onclick="insertEmoji('👍')">👍</span>
+            <span class="emoji-item" onclick="insertEmoji('👏')">👏</span>
+            <span class="emoji-item" onclick="insertEmoji('🙌')">🙌</span>
+            <span class="emoji-item" onclick="insertEmoji('💪')">💪</span>
+        </div>
+        <div class="emoji-grid hidden" id="tab-simbolos">
+            <span class="emoji-item" onclick="insertEmoji('❤️')">❤️</span>
+            <span class="emoji-item" onclick="insertEmoji('💔')">💔</span>
+            <span class="emoji-item" onclick="insertEmoji('💖')">💖</span>
+            <span class="emoji-item" onclick="insertEmoji('💙')">💙</span>
+            <span class="emoji-item" onclick="insertEmoji('💚')">💚</span>
+            <span class="emoji-item" onclick="insertEmoji('💛')">💛</span>
+            <span class="emoji-item" onclick="insertEmoji('💜')">💜</span>
+            <span class="emoji-item" onclick="insertEmoji('🧡')">🧡</span>
+            <span class="emoji-item" onclick="insertEmoji('🖤')">🖤</span>
+            <span class="emoji-item" onclick="insertEmoji('🤍')">🤍</span>
+            <span class="emoji-item" onclick="insertEmoji('🤎')">🤎</span>
+            <span class="emoji-item" onclick="insertEmoji('💬')">💬</span>
+        </div>
+    </div>
+</div>
 
 <label data-lang="anim_in">Animación Entrada</label>
 <select id="entrada">
@@ -102,6 +154,7 @@
             <option value="'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif">Divertida (Comic)</option>
             <option value="'Verdana', Geneva, sans-serif">Ancha (Verdana)</option>
         </select>
+
     </div>
 </details>
 

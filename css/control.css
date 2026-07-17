@@ -139,3 +139,151 @@ summary {
 .btn-reset:hover {
     background-color: #900;
 }
+
+/* --- SELECTOR DE EMOJIS --- */
+.input-emoji-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-emoji-container input {
+    flex-grow: 1;
+    padding-right: 45px !important; /* Espacio para el botón de emoji */
+}
+
+.emoji-trigger {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    border-radius: 4px;
+}
+
+.emoji-trigger:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    transform: scale(1.1);
+}
+
+.emoji-picker {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+    z-index: 100;
+    width: 280px;
+    background: #1e1e1e;
+    border: 1px solid #444;
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    padding: 8px;
+}
+
+.emoji-picker.hidden {
+    display: none;
+}
+
+.emoji-picker-tabs {
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #444;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+}
+
+.emoji-picker-tabs .tab-btn {
+    background: transparent;
+    border: none;
+    width: auto;
+    margin: 0;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 16px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s ease, transform 0.1s ease;
+}
+
+.emoji-picker-tabs .tab-btn.active {
+    border-bottom-color: #00ffff;
+    transform: scale(1.05);
+}
+
+.emoji-picker-tabs .tab-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.emoji-grid.hidden {
+    display: none !important;
+}
+
+/* Personalización del Scrollbar del selector */
+.emoji-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.emoji-grid::-webkit-scrollbar-track {
+    background: #111;
+    border-radius: 3px;
+}
+
+.emoji-grid::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 3px;
+}
+
+.emoji-grid::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.emoji-item {
+    font-size: 22px;
+    text-align: center;
+    padding: 4px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 4px;
+    transition: background-color 0.1s ease, transform 0.1s ease;
+}
+
+.emoji-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.2);
+}
+
+/* --- FUENTE PERSONALIZADA --- */
+#custom-font-container {
+    margin-top: 6px;
+    width: 100%;
+}
+
+#custom-font-container.hidden {
+    display: none !important;
+}
+
+#custom-font-container input {
+    margin-top: 0;
+    border-color: #555;
+    background-color: #252525;
+}
+
