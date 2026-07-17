@@ -271,19 +271,17 @@ summary {
     transform: scale(1.2);
 }
 
-/* --- FUENTE PERSONALIZADA --- */
-#custom-font-container {
-    margin-top: 6px;
-    width: 100%;
-}
-
-#custom-font-container.hidden {
-    display: none !important;
-}
-
-#custom-font-container input {
-    margin-top: 0;
-    border-color: #555;
-    background-color: #252525;
+/* --- INSTRUCCIÓN PARA FUENTES PERSONALIZADAS --- */
+.font-tip {
+    font-size: 11px;
+    color: #999;
+    margin-top: 8px;
+    margin-bottom: 0;
+    line-height: 1.45;
+    font-style: italic;
+    background-color: rgba(255, 193, 7, 0.06);
+    border-left: 3px solid #ffc107;
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
 }
 

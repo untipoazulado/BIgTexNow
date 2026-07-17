@@ -1,6 +1,7 @@
 const STORAGE_KEY = "overlayData";
 const bc = new BroadcastChannel('obs_overlay_channel');
 const CONTROL_STATE_KEY = "bigTextNowControlState"; // Clave para guardar el estado de los controles
+let overlayVisible = false;
 
 function enviar(datos){
     const payload = {
@@ -33,12 +34,14 @@ function mostrar(){
         estilo: document.getElementById("estilo").value,
         accion: "mostrar"
     });
+    overlayVisible = true;
 }
 
 function ocultar(){
     enviar({
         accion: "ocultar"
     });
+    overlayVisible = false;
 }
 
 // --- Funciones Nuevas ---
@@ -54,6 +57,7 @@ function guardarEstado() {
         estilo: document.getElementById("estilo").value,
         tamano: document.getElementById("tamano").value,
         fuente: document.getElementById("fuente").value,
+        toggleEnter: document.getElementById("toggleEnter") ? document.getElementById("toggleEnter").checked : false,
         language: document.getElementById("language").value
     };
     localStorage.setItem(CONTROL_STATE_KEY, JSON.stringify(estado));
@@ -72,6 +76,11 @@ function cargarEstado() {
                 el.value = estado[id];
             }
         });
+
+        const toggleCheckbox = document.getElementById("toggleEnter");
+        if (toggleCheckbox && estado.toggleEnter !== undefined) {
+            toggleCheckbox.checked = estado.toggleEnter;
+        }
 
         cambiarIdioma(document.getElementById("language").value);
     }
@@ -113,7 +122,10 @@ function resetearTodo() {
         document.getElementById("tamano").value = "auto";
         document.getElementById("fuente").value = "default";
         
-
+        const toggleCheckbox = document.getElementById("toggleEnter");
+        if (toggleCheckbox) {
+            toggleCheckbox.checked = false;
+        }
 
         // Borrar la configuración guardada para que la próxima vez cargue los defaults del HTML
         localStorage.removeItem(CONTROL_STATE_KEY);
@@ -128,6 +140,7 @@ const translations = {
     es: {
         title: "Control BIG TEXT NOW",
         text_label: "Texto",
+        toggle_enter_label: "Mostrar u ocultar presionando Enter",
         anim_in: "Animación Entrada",
         anim_out: "Animación Salida",
         anim_loop: "Animación Permanente (Loop)",
@@ -142,7 +155,11 @@ const translations = {
         saved_phrases: "Frases Guardadas",
         btn_load: "Cargar",
         btn_reset: "Resetear Todo",
-        btn_detect: "🔍 Detectar",
+        add_font_placeholder: "Nombre de fuente instalada...",
+        btn_delete_title: "Eliminar fuente manual seleccionada",
+        only_manual_delete_msg: "Solo puedes eliminar fuentes agregadas manualmente.",
+        font_exists_msg: "Esta fuente ya está en la lista.",
+        font_tip: "⚠️ Para añadir una fuente del sistema, escribe su nombre exacto y asegúrate de tenerla instalada para que se renderice correctamente.",
         reset_confirm: "¿Estás seguro de que quieres restablecer todas las opciones a sus valores por defecto?",
         footer: "Desarrollado por Un Tipo Azulado con asistencia de IA",
         // Opciones de Selects
@@ -163,7 +180,9 @@ const translations = {
         estilo: {
             normal: "Normal (Plano)", neon: "Neón Party (Brillo)", fuego: "Fuego Intenso", arcoiris: "Arcoíris", 
             tresd: "3D Pop", cyber: "Cyberpunk", comic: "Cómic (Borde Negro)", elegante: "Elegante (Dorado)", 
-            metal: "Metálico", retro: "Retro (Vaporwave)", hielo: "Hielo (Frozen)", terror: "Terror (Sangre)"
+            metal: "Metálico", retro: "Retro (Vaporwave)", hielo: "Hielo (Frozen)", terror: "Terror (Sangre)",
+            dance: "Sombra Danzante (Dancing Shadow)", melting: "Texto Derretido (Melting Text)", 
+            matrix: "Matriz (Matrix)", glow3d: "3D Brillante (Glowing 3D)"
         },
         tamano: {
             auto: "Automático (Ajustable)", "300": "Gigante (300px)", "200": "Grande (200px)", 
@@ -179,6 +198,7 @@ const translations = {
     en: {
         title: "BIG TEXT NOW Control",
         text_label: "Text",
+        toggle_enter_label: "Show or hide by pressing Enter",
         anim_in: "Entrance Animation",
         anim_out: "Exit Animation",
         anim_loop: "Permanent Animation (Loop)",
@@ -193,7 +213,11 @@ const translations = {
         saved_phrases: "Saved Phrases",
         btn_load: "Load",
         btn_reset: "Reset All",
-        btn_detect: "🔍 Detect",
+        add_font_placeholder: "Installed font name...",
+        btn_delete_title: "Delete selected manual font",
+        only_manual_delete_msg: "You can only delete manually added fonts.",
+        font_exists_msg: "This font is already in the list.",
+        font_tip: "⚠️ To add a system font, write its exact name and make sure you have it installed for it to render correctly.",
         reset_confirm: "Are you sure you want to reset all options to their default values?",
         footer: "Developed by Un Tipo Azulado with AI assistance",
         // Select Options
@@ -214,7 +238,9 @@ const translations = {
         estilo: {
             normal: "Normal (Flat)", neon: "Neon Party (Glow)", fuego: "Intense Fire", arcoiris: "Rainbow", 
             tresd: "3D Pop", cyber: "Cyberpunk", comic: "Comic (Black Border)", elegante: "Elegant (Gold)", 
-            metal: "Metallic", retro: "Retro (Vaporwave)", hielo: "Ice (Frozen)", terror: "Horror (Blood)"
+            metal: "Metallic", retro: "Retro (Vaporwave)", hielo: "Ice (Frozen)", terror: "Horror (Blood)",
+            dance: "Dancing Shadow", melting: "Melting Text", 
+            matrix: "Matrix", glow3d: "Glowing 3D"
         },
         tamano: {
             auto: "Automatic (Adjustable)", "300": "Giant (300px)", "200": "Large (200px)", 
@@ -225,6 +251,64 @@ const translations = {
             "'Courier New', Courier, monospace": "Machine (Courier)", "'Brush Script MT', cursive": "Handwritten (Script)", 
             "'Times New Roman', Times, serif": "Classic (Serif)", "Impact, Charcoal, sans-serif": "Impact (Meme)",
             "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif": "Fun (Comic)", "'Verdana', Geneva, sans-serif": "Wide (Verdana)"
+        }
+    },
+    pt: {
+        title: "Controle BIG TEXT NOW",
+        text_label: "Texto",
+        toggle_enter_label: "Mostrar ou ocultar pressionando Enter",
+        anim_in: "Animação de Entrada",
+        anim_out: "Animação de Saída",
+        anim_loop: "Animação Permanente (Loop)",
+        intensity: "Intensidade da Animação (1x - 3x)",
+        more_opts: "Mais Opções (Cor, Estilo, Fonte)",
+        color_label: "Cor Base",
+        style_label: "Estilo Visual",
+        size_label: "Tamanho da Fonte",
+        font_label: "Tipografía (Fonte)",
+        btn_show: "Mostrar",
+        btn_hide: "Ocultar",
+        saved_phrases: "Frases Salvas",
+        btn_load: "Carregar",
+        btn_reset: "Redefinir Tudo",
+        add_font_placeholder: "Nome da fonte instalada...",
+        btn_delete_title: "Excluir fonte manual selecionada",
+        only_manual_delete_msg: "Você só pode excluir fontes adicionadas manualmente.",
+        font_exists_msg: "Esta fonte já está na lista.",
+        font_tip: "⚠️ Para adicionar uma fonte do sistema, escreva o nome exato dela e certifique-se de tê-la instalada para que seja renderizada corretamente.",
+        reset_confirm: "Tem certeza que deseja redefinir todas as opções para os valores padrão?",
+        footer: "Desenvolvido por Un Tipo Azulado com assistência de IA",
+        // Opções de Selects
+        entrada: {
+            impacto: "Impacto", fade: "Fade", zoom: "Zoom", caida: "Queda", disco: "Disco (Giro)", 
+            glitch: "Glitch Digital", elastico: "Super Elástico", maquina: "Máquina de Escrever", 
+            remolino: "Redemoinho", enfoque: "Foco Suave"
+        },
+        salida: {
+            fadeUp: "Fade para Cima", zoomOut: "Zoom Out", explode: "Explosão", deslizar: "Deslizar Rápido", 
+            cortina: "Cortina", agujero: "Buraco Negro", cohete: "Foguete (Para Cima)"
+        },
+        permanente: {
+            ninguna: "Nenhuma (Estático)", latido: "Pulsar", temblor: "Tremor", 
+            sacudir: "Sacudir (Terremoto)", onda: "Onda", flotar: "Flutuar Suave", 
+            flotar_agresivo: "Flutuar Agressivo (Estilo Canva)", giro3d: "Giro 3D Lento", balanceo: "Balanço"
+        },
+        estilo: {
+            normal: "Normal (Plano)", neon: "Neon Party (Brilho)", fuego: "Fogo Intenso", arcoiris: "Arco-íris", 
+            tresd: "3D Pop", cyber: "Cyberpunk", comic: "Comic (Borda Preta)", elegante: "Elegante (Dourado)", 
+            metal: "Metálico", retro: "Retro (Vaporwave)", hielo: "Gelo (Frozen)", terror: "Terror (Sangre)",
+            dance: "Sombra Dançante (Dancing Shadow)", melting: "Texto Derretido (Melting Text)", 
+            matrix: "Matrix", glow3d: "3D Brilhante (Glowing 3D)"
+        },
+        tamano: {
+            auto: "Automático (Ajustável)", "300": "Gigante (300px)", "200": "Grande (200px)", 
+            "150": "Médio (150px)", "100": "Pequeno (100px)", "60": "Texto Longo (60px)"
+        },
+        fuente: {
+            default: "Padrão (Sistema)", "'Arial Black', Gadget, sans-serif": "Grossa (Arial Black)", 
+            "'Courier New', Courier, monospace": "Máquina (Courier)", "'Brush Script MT', cursive": "Manuscrita (Script)", 
+            "'Times New Roman', Times, serif": "Clássica (Serif)", "Impact, Charcoal, sans-serif": "Impacto (Meme)",
+            "'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif": "Divertida (Comic)", "'Verdana', Geneva, sans-serif": "Larga (Verdana)"
         }
     }
 };
@@ -250,9 +334,23 @@ function cambiarIdioma(lang) {
     });
     
     // 3. Traducir placeholders de presets
-    for(let i=1; i<=5; i++) {
+    for(let i=1; i<=10; i++) {
         const input = document.getElementById("preset" + i);
         if(input) input.placeholder = lang === 'en' ? "Phrase " + i : "Frase " + i;
+    }
+
+    // 4. Traducir placeholder, título y tip de fuente manual
+    const inputNuevaFuente = document.getElementById("nuevaFuente");
+    if(inputNuevaFuente) {
+        inputNuevaFuente.placeholder = t.add_font_placeholder;
+    }
+    const btnEliminarFuente = document.getElementById("btn-eliminar-fuente");
+    if(btnEliminarFuente) {
+        btnEliminarFuente.title = t.btn_delete_title;
+    }
+    const fontTip = document.querySelector(".font-tip");
+    if(fontTip) {
+        fontTip.textContent = t.font_tip;
     }
 }
 
@@ -477,7 +575,10 @@ async function poblarSelectorFuentes(forzar = false) {
     // Guardar la selección actual para no perderla al repoblar
     const valorSeleccionado = select.value;
 
-    // Obtener las fuentes ya representadas en las opciones hardcodeadas
+    // Remover TODAS las opciones creadas dinámicamente en ejecuciones anteriores
+    select.querySelectorAll(".dynamic-font-option").forEach(opt => opt.remove());
+
+    // Obtener las fuentes ya representadas en las opciones fijas (hardcodeadas) para no duplicarlas
     const existentes = new Set();
     Array.from(select.options).forEach(opt => {
         if (opt.value && opt.value !== "default") {
@@ -486,44 +587,63 @@ async function poblarSelectorFuentes(forzar = false) {
         }
     });
 
-    // Remover opciones de detección previa (las que NO contienen coma en su value)
-    const optionsToRemove = [];
-    Array.from(select.options).forEach(opt => {
-        if (opt.value && opt.value !== "default" && !opt.value.includes(",")) {
-            optionsToRemove.push(opt);
-        }
-    });
-    optionsToRemove.forEach(opt => opt.remove());
+    // 1. Obtener Fuentes Agregadas Manualmente
+    let manuales = [];
+    const cachedManual = localStorage.getItem("bigTextNowManualFonts");
+    if (cachedManual) {
+        try { manuales = JSON.parse(cachedManual); } catch (e) {}
+    }
+    // Filtrar duplicados con las fijas
+    const manualesFiltradas = manuales.filter(f => !existentes.has(f.toLowerCase())).sort();
 
-    // Usar detección por lista predefinida / API
-    let fuentes = [];
+    // 2. Obtener Fuentes Detectadas Automáticamente (API / Canvas)
+    let detectadas = [];
     if (!forzar) {
-        const cached = localStorage.getItem(FONTS_CACHE_KEY);
-        if (cached) {
-            try { fuentes = JSON.parse(cached); } catch (e) { }
+        const cachedDetectadas = localStorage.getItem(FONTS_CACHE_KEY);
+        if (cachedDetectadas) {
+            try { detectadas = JSON.parse(cachedDetectadas); } catch (e) { }
         }
     }
-    if (fuentes.length === 0) {
-        fuentes = await detectarFuentesInstaladas();
+    if (detectadas.length === 0) {
+        detectadas = await detectarFuentesInstaladas();
     }
+    // Filtrar duplicados con las fijas y las manuales
+    const detectadasFiltradas = detectadas.filter(f => {
+        const lower = f.toLowerCase();
+        return !existentes.has(lower) && !manualesFiltradas.some(m => m.toLowerCase() === lower);
+    }).sort();
 
-    // Filtrar fuentes que ya están en el select hardcodeado
-    const nuevas = fuentes.filter(f => !existentes.has(f.toLowerCase())).sort();
+    // 3. Añadir al Dropdown
+    // A) Fuentes Manuales
+    if (manualesFiltradas.length > 0) {
+        const sep = document.createElement("option");
+        sep.disabled = true;
+        sep.textContent = "─── Fuentes añadidas ───";
+        sep.classList.add("dynamic-font-option");
+        select.appendChild(sep);
 
-    if (nuevas.length > 0) {
-        // Separador visual (solo si hay fuentes hardcodeadas además de default)
-        if (select.options.length > 1) {
-            const sep = document.createElement("option");
-            sep.disabled = true;
-            sep.textContent = "─── Fuentes detectadas ───";
-            select.appendChild(sep);
-        }
-
-        // Agregar cada fuente detectada
-        for (const fontName of nuevas) {
+        for (const fontName of manualesFiltradas) {
             const opt = document.createElement("option");
             opt.value = '"' + fontName + '"';
             opt.textContent = fontName;
+            opt.classList.add("dynamic-font-option");
+            select.appendChild(opt);
+        }
+    }
+
+    // B) Fuentes Detectadas
+    if (detectadasFiltradas.length > 0) {
+        const sep = document.createElement("option");
+        sep.disabled = true;
+        sep.textContent = "─── Fuentes detectadas ───";
+        sep.classList.add("dynamic-font-option");
+        select.appendChild(sep);
+
+        for (const fontName of detectadasFiltradas) {
+            const opt = document.createElement("option");
+            opt.value = '"' + fontName + '"';
+            opt.textContent = fontName;
+            opt.classList.add("dynamic-font-option");
             select.appendChild(opt);
         }
     }
@@ -536,6 +656,93 @@ async function poblarSelectorFuentes(forzar = false) {
 
 async function escanearFuentes() {
     await poblarSelectorFuentes(true);
+}
+
+function agregarFuenteManual() {
+    const input = document.getElementById("nuevaFuente");
+    if (!input) return;
+
+    const fontName = input.value.trim();
+    if (!fontName) return;
+
+    const lang = document.getElementById("language").value;
+    const select = document.getElementById("fuente");
+
+    // Comprobar si ya existe en las fijas
+    const fijas = new Set();
+    if (select) {
+        Array.from(select.options).forEach(opt => {
+            if (opt.value && opt.value !== "default" && !opt.classList.contains("dynamic-font-option")) {
+                const name = opt.value.replace(/['"]/g, "").split(",")[0].trim();
+                fijas.add(name.toLowerCase());
+            }
+        });
+    }
+
+    if (fijas.has(fontName.toLowerCase())) {
+        alert(translations[lang].font_exists_msg);
+        return;
+    }
+
+    // Leer manuales
+    let manuales = [];
+    const cached = localStorage.getItem("bigTextNowManualFonts");
+    if (cached) {
+        try { manuales = JSON.parse(cached); } catch (e) {}
+    }
+
+    // Comprobar si ya está en las manuales
+    if (manuales.some(m => m.toLowerCase() === fontName.toLowerCase())) {
+        alert(translations[lang].font_exists_msg);
+        return;
+    }
+
+    // Guardar
+    manuales.push(fontName);
+    localStorage.setItem("bigTextNowManualFonts", JSON.stringify(manuales));
+
+    // Limpiar input y actualizar dropdown
+    input.value = "";
+    poblarSelectorFuentes().then(() => {
+        // Seleccionar la nueva fuente automáticamente
+        if (select) {
+            select.value = '"' + fontName + '"';
+            guardarEstado();
+        }
+    });
+}
+
+function eliminarFuenteManual() {
+    const select = document.getElementById("fuente");
+    if (!select) return;
+
+    const valorSeleccionado = select.value;
+    if (!valorSeleccionado || valorSeleccionado === "default") return;
+
+    // Extraer el nombre de la fuente de las comillas
+    const fontName = valorSeleccionado.replace(/['"]/g, "").trim();
+    const lang = document.getElementById("language").value;
+
+    // Leer manuales
+    let manuales = [];
+    const cached = localStorage.getItem("bigTextNowManualFonts");
+    if (cached) {
+        try { manuales = JSON.parse(cached); } catch (e) {}
+    }
+
+    const index = manuales.findIndex(m => m.toLowerCase() === fontName.toLowerCase());
+    if (index > -1) {
+        manuales.splice(index, 1);
+        localStorage.setItem("bigTextNowManualFonts", JSON.stringify(manuales));
+
+        // Regresar a la fuente por defecto y repoblar
+        select.value = "default";
+        poblarSelectorFuentes().then(() => {
+            guardarEstado();
+        });
+    } else {
+        alert(translations[lang].only_manual_delete_msg);
+    }
 }
 
 // Cerrar selector al hacer clic fuera
@@ -556,7 +763,7 @@ window.addEventListener("load", async () => {
     cargarEstado();
 
     // Cargar presets guardados
-    for(let i=1; i<=5; i++) {
+    for(let i=1; i<=10; i++) {
         const val = localStorage.getItem("preset_" + i);
         if(val) document.getElementById("preset" + i).value = val;
     }
@@ -564,11 +771,29 @@ window.addEventListener("load", async () => {
     // 2. Inicializar/actualizar visuales que no se restauran solo con .value
     actualizarColorInput(document.getElementById("colorTexto"));
 
-    const idsParaGuardar = ['texto', 'entrada', 'salida', 'permanente', 'intensidad', 'colorTexto', 'estilo', 'tamano', 'fuente', 'language'];
+    // 3. Registrar listener para la tecla Enter en el cuadro de texto
+    const textoInput = document.getElementById("texto");
+    if (textoInput) {
+        textoInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                const toggleCheckbox = document.getElementById("toggleEnter");
+                if (toggleCheckbox && toggleCheckbox.checked) {
+                    e.preventDefault();
+                    if (overlayVisible) {
+                        ocultar();
+                    } else {
+                        mostrar();
+                    }
+                }
+            }
+        });
+    }
+
+    const idsParaGuardar = ['texto', 'entrada', 'salida', 'permanente', 'intensidad', 'colorTexto', 'estilo', 'tamano', 'fuente', 'language', 'toggleEnter'];
     idsParaGuardar.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            const eventType = (el.tagName === 'SELECT' || el.type === 'color') ? 'change' : 'input';
+            const eventType = (el.tagName === 'SELECT' || el.type === 'color' || el.type === 'checkbox') ? 'change' : 'input';
             el.addEventListener(eventType, guardarEstado);
         }
     });

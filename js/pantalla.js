@@ -84,6 +84,8 @@ function renderTexto(data){
     cont.className = ""; // Limpiar clases anteriores
     if(data.estilo && data.estilo !== "normal") cont.classList.add(data.estilo);
     cont.style.color = data.color || "#ffffff";
+    cont.setAttribute("data-text", data.texto);
+    cont.style.setProperty('--user-color', data.color || "#ffffff");
     
     // Aplicar fuente
     if (data.fuente && data.fuente !== "default") {

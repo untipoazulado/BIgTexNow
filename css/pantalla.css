@@ -168,7 +168,11 @@ body, html {
 .hielo .emoji,
 .terror .emoji,
 .tresd .emoji,
-.comic .emoji {
+.comic .emoji,
+.dance .emoji,
+.melting .emoji,
+.matrix .emoji,
+.glow3d .emoji {
     -webkit-text-fill-color: initial !important;
     -webkit-text-stroke: initial !important;
     color: initial !important;
@@ -183,4 +187,208 @@ body, html {
     background-clip: initial !important;
     color: initial !important;
     -webkit-text-fill-color: initial !important;
+}
+
+/* --- CONFIGURACIÓN CONTENEDOR (PERSPECTIVA PARA 3D) --- */
+#contenedor {
+    perspective: 1000px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* --- NUEVOS ESTILOS DETALLADOS --- */
+
+/* 1. Dancing shadow (Sombra danzante) */
+.dance {
+    color: var(--user-color) !important;
+    text-shadow: 5px 5px 0 #ff005e, 10px 10px 0 #00d4ff;
+    animation: shadow-dance 2s infinite;
+}
+
+@keyframes shadow-dance {
+    0%, 100% {
+        text-shadow: 5px 5px 0 #ff005e, 10px 10px 0 #00d4ff;
+    }
+    50% {
+        text-shadow: -5px -5px 0 #00d4ff, -10px -10px 0 #ff005e;
+    }
+}
+
+/* 2. Melting text (Texto derretido) */
+#contenedor:has(.melting) {
+    animation: melt 3s infinite ease-in-out;
+}
+
+.melting {
+    position: relative;
+    background: linear-gradient(90deg, var(--user-color), rgba(255,255,255,0.4), var(--user-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent;
+}
+
+.melting::before,
+.melting::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--user-color), rgba(255,255,255,0.4), var(--user-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent;
+    z-index: -1;
+    transform: scaleY(1);
+    opacity: 0.5;
+    animation: drip 3s infinite ease-in-out;
+}
+
+.melting::after {
+    filter: blur(10px);
+    opacity: 0.3;
+}
+
+@keyframes melt {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(20px);
+    }
+}
+
+@keyframes drip {
+    0%, 100% {
+        transform: scaleY(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scaleY(1.5);
+        opacity: 0.7;
+    }
+}
+
+/* 3. Matrix */
+#contenedor:has(.matrix)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        var(--user-color) 0,
+        var(--user-color) 2px,
+        transparent 4px
+    );
+    opacity: 0.15;
+    animation: rain 10s linear infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.matrix {
+    color: var(--user-color) !important;
+    font-family: monospace, Courier, sans-serif !important;
+    position: relative;
+    text-shadow: 0 0 10px var(--user-color), 0 0 20px var(--user-color), 0 0 30px var(--user-color);
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.85); /* Fondo terminal oscuro */
+    border: 3px solid var(--user-color); /* Borde neón a juego */
+    box-shadow: 0 0 20px var(--user-color), inset 0 0 15px var(--user-color); /* Resplandor exterior e interior */
+    padding: 15px 30px;
+    border-radius: 6px;
+    display: inline-block;
+    width: auto !important;
+}
+
+.matrix::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 15px 30px; /* Alinear el glitch perfectamente con el padding del contenedor */
+    box-sizing: border-box;
+    animation: glitch 2s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+    transform: translate(-2px, -2px);
+    color: var(--user-color);
+    text-shadow: 0 0 5px var(--user-color), 0 0 15px var(--user-color);
+    pointer-events: none;
+}
+
+@keyframes rain {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+@keyframes glitch {
+    0%, 100% {
+        clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        transform: translate(0);
+    }
+    33% {
+        clip-path: polygon(0 0, 100% 0, 100% 15%, 0 15%);
+        transform: translate(-5px, -5px);
+    }
+    66% {
+        clip-path: polygon(0 85%, 100% 85%, 100% 100%, 0 100%);
+        transform: translate(5px, 5px);
+    }
+}
+
+/* 4. Glowing 3D text (Wobble y extrusión) */
+#contenedor:has(.glow3d) {
+    animation: wobble 5s ease-in-out infinite;
+    transform-origin: center center;
+    transform-style: preserve-3d;
+}
+
+.glow3d {
+    font-family: 'Concert One', Impact, sans-serif !important;
+    text-transform: uppercase;
+    color: var(--user-color) !important;
+    transform-style: preserve-3d;
+    animation: glow 10s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% {
+        text-shadow: 
+            0 1px 0 #ccc, 0 2px 0 #c5c5c5, 0 3px 0 #bbb, 0 4px 0 #b5b5b5, 0 5px 0 #aaa,
+            0 0 30px var(--user-color);
+    }
+    25% {
+        text-shadow: 
+            0 1px 0 #ccc, 0 2px 0 #c5c5c5, 0 3px 0 #bbb, 0 4px 0 #b5b5b5, 0 5px 0 #aaa,
+            0 0 30px #ff5500;
+    }
+    50% {
+        text-shadow: 
+            0 1px 0 #ccc, 0 2px 0 #c5c5c5, 0 3px 0 #bbb, 0 4px 0 #b5b5b5, 0 5px 0 #aaa,
+            0 0 30px #00ff00;
+    }
+    75% {
+        text-shadow: 
+            0 1px 0 #ccc, 0 2px 0 #c5c5c5, 0 3px 0 #bbb, 0 4px 0 #b5b5b5, 0 5px 0 #aaa,
+            0 0 30px #00ffff;
+    }
+}
+
+@keyframes wobble {
+    0%, 100% { transform: rotate3d(1, 1, 0, 20deg); }
+    25% { transform: rotate3d(-1, 1, 0, 20deg); }
+    50% { transform: rotate3d(-1, -1, 0, 20deg); }
+    75% { transform: rotate3d(1, -1, 0, 20deg); }
 }

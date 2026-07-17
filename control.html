@@ -12,6 +12,7 @@
     <select id="language" onchange="cambiarIdioma(this.value)">
         <option value="es">🇪🇸 ES</option>
         <option value="en">🇺🇸 EN</option>
+        <option value="pt">🇵🇹 PT</option>
     </select>
 </div>
 
@@ -38,6 +39,18 @@
             <span class="emoji-item" onclick="insertEmoji('⚠️')">⚠️</span>
             <span class="emoji-item" onclick="insertEmoji('🎮')">🎮</span>
             <span class="emoji-item" onclick="insertEmoji('🎵')">🎵</span>
+            <span class="emoji-item" onclick="insertEmoji('⚡')">⚡</span>
+            <span class="emoji-item" onclick="insertEmoji('🌈')">🌈</span>
+            <span class="emoji-item" onclick="insertEmoji('🔮')">🔮</span>
+            <span class="emoji-item" onclick="insertEmoji('💎')">💎</span>
+            <span class="emoji-item" onclick="insertEmoji('🎯')">🎯</span>
+            <span class="emoji-item" onclick="insertEmoji('🏆')">🏆</span>
+            <span class="emoji-item" onclick="insertEmoji('🍿')">🍿</span>
+            <span class="emoji-item" onclick="insertEmoji('🎈')">🎈</span>
+            <span class="emoji-item" onclick="insertEmoji('🎁')">🎁</span>
+            <span class="emoji-item" onclick="insertEmoji('💡')">💡</span>
+            <span class="emoji-item" onclick="insertEmoji('💸')">💸</span>
+            <span class="emoji-item" onclick="insertEmoji('🍀')">🍀</span>
         </div>
         <div class="emoji-grid hidden" id="tab-caras">
             <span class="emoji-item" onclick="insertEmoji('😀')">😀</span>
@@ -52,6 +65,18 @@
             <span class="emoji-item" onclick="insertEmoji('👏')">👏</span>
             <span class="emoji-item" onclick="insertEmoji('🙌')">🙌</span>
             <span class="emoji-item" onclick="insertEmoji('💪')">💪</span>
+            <span class="emoji-item" onclick="insertEmoji('🤣')">🤣</span>
+            <span class="emoji-item" onclick="insertEmoji('🥳')">🥳</span>
+            <span class="emoji-item" onclick="insertEmoji('😉')">😉</span>
+            <span class="emoji-item" onclick="insertEmoji('😏')">😏</span>
+            <span class="emoji-item" onclick="insertEmoji('😴')">😴</span>
+            <span class="emoji-item" onclick="insertEmoji('🙄')">🙄</span>
+            <span class="emoji-item" onclick="insertEmoji('😡')">😡</span>
+            <span class="emoji-item" onclick="insertEmoji('🤡')">🤡</span>
+            <span class="emoji-item" onclick="insertEmoji('👽')">👽</span>
+            <span class="emoji-item" onclick="insertEmoji('👾')">👾</span>
+            <span class="emoji-item" onclick="insertEmoji('👻')">👻</span>
+            <span class="emoji-item" onclick="insertEmoji('👋')">👋</span>
         </div>
         <div class="emoji-grid hidden" id="tab-simbolos">
             <span class="emoji-item" onclick="insertEmoji('❤️')">❤️</span>
@@ -66,8 +91,24 @@
             <span class="emoji-item" onclick="insertEmoji('🤍')">🤍</span>
             <span class="emoji-item" onclick="insertEmoji('🤎')">🤎</span>
             <span class="emoji-item" onclick="insertEmoji('💬')">💬</span>
+            <span class="emoji-item" onclick="insertEmoji('💘')">💘</span>
+            <span class="emoji-item" onclick="insertEmoji('💕')">💕</span>
+            <span class="emoji-item" onclick="insertEmoji('💞')">💞</span>
+            <span class="emoji-item" onclick="insertEmoji('🌟')">🌟</span>
+            <span class="emoji-item" onclick="insertEmoji('💢')">💢</span>
+            <span class="emoji-item" onclick="insertEmoji('💤')">💤</span>
+            <span class="emoji-item" onclick="insertEmoji('💭')">💭</span>
+            <span class="emoji-item" onclick="insertEmoji('✉️')">✉️</span>
+            <span class="emoji-item" onclick="insertEmoji('🔔')">🔔</span>
+            <span class="emoji-item" onclick="insertEmoji('📣')">📣</span>
+            <span class="emoji-item" onclick="insertEmoji('🔍')">🔍</span>
+            <span class="emoji-item" onclick="insertEmoji('🔑')">🔑</span>
         </div>
     </div>
+</div>
+<div class="toggle-enter-container" style="margin-top: 5px; display: flex; align-items: center; gap: 5px;">
+    <input type="checkbox" id="toggleEnter" style="width: auto; margin-top: 0; cursor: pointer;">
+    <label for="toggleEnter" data-lang="toggle_enter_label" style="margin-top: 0; cursor: pointer; user-select: none;">Mostrar u ocultar presionando Enter</label>
 </div>
 
 <label data-lang="anim_in">Animación Entrada</label>
@@ -131,6 +172,10 @@
             <option value="retro">Retro (Vaporwave)</option>
             <option value="hielo">Hielo (Frozen)</option>
             <option value="terror">Terror (Sangre)</option>
+            <option value="dance">Sombra Danzante (Dancing Shadow)</option>
+            <option value="melting">Texto Derretido (Melting Text)</option>
+            <option value="matrix">Matriz (Matrix)</option>
+            <option value="glow3d">3D Brillante (Glowing 3D)</option>
         </select>
 
         <label data-lang="size_label">Tamaño Fuente</label>
@@ -144,19 +189,22 @@
         </select>
 
         <label data-lang="font_label">Tipografía (Fuente)</label>
+        <select id="fuente" style="margin-top: 5px;">
+            <option value="default">Por Defecto (Sistema)</option>
+            <option value="'Arial Black', Gadget, sans-serif">Gruesa (Arial Black)</option>
+            <option value="'Courier New', Courier, monospace">Máquina (Courier)</option>
+            <option value="'Brush Script MT', cursive">Manuscrita (Script)</option>
+            <option value="'Times New Roman', Times, serif">Clásica (Serif)</option>
+            <option value="Impact, Charcoal, sans-serif">Impacto (Meme)</option>
+            <option value="'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif">Divertida (Comic)</option>
+            <option value="'Verdana', Geneva, sans-serif">Ancha (Verdana)</option>
+        </select>
         <div style="display: flex; gap: 5px; margin-top: 5px;">
-            <select id="fuente" style="margin-top: 0; flex-grow: 1;">
-                <option value="default">Por Defecto (Sistema)</option>
-                <option value="'Arial Black', Gadget, sans-serif">Gruesa (Arial Black)</option>
-                <option value="'Courier New', Courier, monospace">Máquina (Courier)</option>
-                <option value="'Brush Script MT', cursive">Manuscrita (Script)</option>
-                <option value="'Times New Roman', Times, serif">Clásica (Serif)</option>
-                <option value="Impact, Charcoal, sans-serif">Impacto (Meme)</option>
-                <option value="'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif">Divertida (Comic)</option>
-                <option value="'Verdana', Geneva, sans-serif">Ancha (Verdana)</option>
-            </select>
-            <button type="button" class="btn-small" onclick="escanearFuentes()" data-lang="btn_detect" style="margin-top: 0; padding: 0 12px; height: 35px; white-space: nowrap;">🔍 Detectar</button>
+            <input type="text" id="nuevaFuente" placeholder="Nombre de fuente instalada..." style="margin-top: 0; flex-grow: 1;">
+            <button type="button" class="btn-small" onclick="agregarFuenteManual()" style="margin-top: 0; padding: 0 12px; height: 35px; white-space: nowrap; font-weight: bold; font-size: 1.1em;">➕</button>
+            <button type="button" id="btn-eliminar-fuente" class="btn-small" onclick="eliminarFuenteManual()" style="margin-top: 0; padding: 0 12px; height: 35px; white-space: nowrap; background-color: #d9534f; border-color: #d43f3a;" title="Eliminar fuente manual seleccionada">🗑️</button>
         </div>
+        <p class="font-tip" data-lang="font_tip">⚠️ Para añadir una fuente del sistema, escribe su nombre exacto y asegúrate de tenerla instalada para que se renderice correctamente.</p>
 
     </div>
 </details>
@@ -187,6 +235,26 @@
     <div class="preset-row">
         <input type="text" id="preset5" placeholder="Frase 5" oninput="guardarPreset(5)">
         <button class="btn-small" onclick="cargarPreset(5)" data-lang="btn_load">Cargar</button>
+    </div>
+    <div class="preset-row">
+        <input type="text" id="preset6" placeholder="Frase 6" oninput="guardarPreset(6)">
+        <button class="btn-small" onclick="cargarPreset(6)" data-lang="btn_load">Cargar</button>
+    </div>
+    <div class="preset-row">
+        <input type="text" id="preset7" placeholder="Frase 7" oninput="guardarPreset(7)">
+        <button class="btn-small" onclick="cargarPreset(7)" data-lang="btn_load">Cargar</button>
+    </div>
+    <div class="preset-row">
+        <input type="text" id="preset8" placeholder="Frase 8" oninput="guardarPreset(8)">
+        <button class="btn-small" onclick="cargarPreset(8)" data-lang="btn_load">Cargar</button>
+    </div>
+    <div class="preset-row">
+        <input type="text" id="preset9" placeholder="Frase 9" oninput="guardarPreset(9)">
+        <button class="btn-small" onclick="cargarPreset(9)" data-lang="btn_load">Cargar</button>
+    </div>
+    <div class="preset-row">
+        <input type="text" id="preset10" placeholder="Frase 10" oninput="guardarPreset(10)">
+        <button class="btn-small" onclick="cargarPreset(10)" data-lang="btn_load">Cargar</button>
     </div>
 </div>
 
