@@ -161,7 +161,7 @@ const translations = {
         font_exists_msg: "Esta fuente ya está en la lista.",
         font_tip: "⚠️ Para añadir una fuente del sistema, escribe su nombre exacto y asegúrate de tenerla instalada para que se renderice correctamente.",
         reset_confirm: "¿Estás seguro de que quieres restablecer todas las opciones a sus valores por defecto?",
-        footer: "Desarrollado por Un Tipo Azulado con asistencia de IA",
+        footer: "v2.0.0 | Desarrollado por Un Tipo Azulado con asistencia de IA",
         // Opciones de Selects
         entrada: {
             impacto: "Impacto", fade: "Fade", zoom: "Zoom", caida: "Caída", disco: "Disco (Giro)", 
@@ -219,7 +219,7 @@ const translations = {
         font_exists_msg: "This font is already in the list.",
         font_tip: "⚠️ To add a system font, write its exact name and make sure you have it installed for it to render correctly.",
         reset_confirm: "Are you sure you want to reset all options to their default values?",
-        footer: "Developed by Un Tipo Azulado with AI assistance",
+        footer: "v2.0.0 | Developed by Un Tipo Azulado with AI assistance",
         // Select Options
         entrada: {
             impacto: "Impact", fade: "Fade", zoom: "Zoom", caida: "Drop", disco: "Disco (Spin)", 
@@ -277,7 +277,7 @@ const translations = {
         font_exists_msg: "Esta fonte já está na lista.",
         font_tip: "⚠️ Para adicionar uma fonte do sistema, escreva o nome exato dela e certifique-se de tê-la instalada para que seja renderizada corretamente.",
         reset_confirm: "Tem certeza que deseja redefinir todas as opções para os valores padrão?",
-        footer: "Desenvolvido por Un Tipo Azulado com assistência de IA",
+        footer: "v2.0.0 | Desenvolvido por Un Tipo Azulado com assistência de IA",
         // Opções de Selects
         entrada: {
             impacto: "Impacto", fade: "Fade", zoom: "Zoom", caida: "Queda", disco: "Disco (Giro)", 
