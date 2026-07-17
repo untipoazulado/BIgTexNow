@@ -117,6 +117,8 @@ function resetearTodo() {
 
         // Borrar la configuración guardada para que la próxima vez cargue los defaults del HTML
         localStorage.removeItem(CONTROL_STATE_KEY);
+        localStorage.removeItem(FONTS_CACHE_KEY);
+        poblarSelectorFuentes();
     }
 }
 
@@ -140,6 +142,7 @@ const translations = {
         saved_phrases: "Frases Guardadas",
         btn_load: "Cargar",
         btn_reset: "Resetear Todo",
+        btn_detect: "🔍 Detectar",
         reset_confirm: "¿Estás seguro de que quieres restablecer todas las opciones a sus valores por defecto?",
         footer: "Desarrollado por Un Tipo Azulado con asistencia de IA",
         // Opciones de Selects
@@ -190,6 +193,7 @@ const translations = {
         saved_phrases: "Saved Phrases",
         btn_load: "Load",
         btn_reset: "Reset All",
+        btn_detect: "🔍 Detect",
         reset_confirm: "Are you sure you want to reset all options to their default values?",
         footer: "Developed by Un Tipo Azulado with AI assistance",
         // Select Options
@@ -423,7 +427,26 @@ const FONTS_TO_TEST = [
     "Trade Gothic", "Univers", "Whitney"
 ];
 
-function detectarFuentesInstaladas() {
+async function detectarFuentesInstaladas() {
+    let disponibles = [];
+
+    // 1. Intentar usar la API moderna de acceso a fuentes locales (obtiene todas las fuentes instaladas en el equipo, incluidas las descargadas a mano)
+    if (window.queryLocalFonts) {
+        try {
+            const localFonts = await window.queryLocalFonts();
+            const uniqueFamilies = new Set();
+            for (const font of localFonts) {
+                uniqueFamilies.add(font.family);
+            }
+            disponibles = Array.from(uniqueFamilies);
+            localStorage.setItem(FONTS_CACHE_KEY, JSON.stringify(disponibles));
+            return disponibles;
+        } catch (e) {
+            console.warn("No se pudo usar queryLocalFonts (permiso denegado o error):", e);
+        }
+    }
+
+    // 2. Si la API no está disponible o falla, usar el método tradicional de comprobación de Canvas
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     const testStr = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -431,7 +454,6 @@ function detectarFuentesInstaladas() {
     ctx.font = "72px monospace";
     const baseWidth = ctx.measureText(testStr).width;
 
-    const disponibles = [];
     for (const fontName of FONTS_TO_TEST) {
         try {
             ctx.font = '72px "' + fontName + '", monospace';
@@ -448,9 +470,12 @@ function detectarFuentesInstaladas() {
     return disponibles;
 }
 
-function poblarSelectorFuentes() {
+async function poblarSelectorFuentes(forzar = false) {
     const select = document.getElementById("fuente");
     if (!select) return;
+
+    // Guardar la selección actual para no perderla al repoblar
+    const valorSeleccionado = select.value;
 
     // Obtener las fuentes ya representadas en las opciones hardcodeadas
     const existentes = new Set();
@@ -470,36 +495,47 @@ function poblarSelectorFuentes() {
     });
     optionsToRemove.forEach(opt => opt.remove());
 
-    // Usar detección por lista predefinida
+    // Usar detección por lista predefinida / API
     let fuentes = [];
-    const cached = localStorage.getItem(FONTS_CACHE_KEY);
-    if (cached) {
-        try { fuentes = JSON.parse(cached); } catch (e) { }
+    if (!forzar) {
+        const cached = localStorage.getItem(FONTS_CACHE_KEY);
+        if (cached) {
+            try { fuentes = JSON.parse(cached); } catch (e) { }
+        }
     }
     if (fuentes.length === 0) {
-        fuentes = detectarFuentesInstaladas();
+        fuentes = await detectarFuentesInstaladas();
     }
 
     // Filtrar fuentes que ya están en el select hardcodeado
     const nuevas = fuentes.filter(f => !existentes.has(f.toLowerCase())).sort();
 
-    if (nuevas.length === 0) return;
+    if (nuevas.length > 0) {
+        // Separador visual (solo si hay fuentes hardcodeadas además de default)
+        if (select.options.length > 1) {
+            const sep = document.createElement("option");
+            sep.disabled = true;
+            sep.textContent = "─── Fuentes detectadas ───";
+            select.appendChild(sep);
+        }
 
-    // Separador visual (solo si hay fuentes hardcodeadas además de default)
-    if (select.options.length > 1) {
-        const sep = document.createElement("option");
-        sep.disabled = true;
-        sep.textContent = "─── Fuentes detectadas ───";
-        select.appendChild(sep);
+        // Agregar cada fuente detectada
+        for (const fontName of nuevas) {
+            const opt = document.createElement("option");
+            opt.value = '"' + fontName + '"';
+            opt.textContent = fontName;
+            select.appendChild(opt);
+        }
     }
 
-    // Agregar cada fuente detectada
-    for (const fontName of nuevas) {
-        const opt = document.createElement("option");
-        opt.value = '"' + fontName + '"';
-        opt.textContent = fontName;
-        select.appendChild(opt);
+    // Restaurar selección previa si aún existe
+    if (valorSeleccionado) {
+        select.value = valorSeleccionado;
     }
+}
+
+async function escanearFuentes() {
+    await poblarSelectorFuentes(true);
 }
 
 // Cerrar selector al hacer clic fuera
@@ -512,9 +548,9 @@ document.addEventListener("click", (event) => {
 });
 
 // Inicialización al cargar
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
     // 0. Poblar selector con fuentes del sistema detectadas
-    poblarSelectorFuentes();
+    await poblarSelectorFuentes();
 
     // 1. Cargar el estado guardado de los controles
     cargarEstado();

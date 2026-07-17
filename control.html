@@ -144,16 +144,19 @@
         </select>
 
         <label data-lang="font_label">Tipografía (Fuente)</label>
-        <select id="fuente">
-            <option value="default">Por Defecto (Sistema)</option>
-            <option value="'Arial Black', Gadget, sans-serif">Gruesa (Arial Black)</option>
-            <option value="'Courier New', Courier, monospace">Máquina (Courier)</option>
-            <option value="'Brush Script MT', cursive">Manuscrita (Script)</option>
-            <option value="'Times New Roman', Times, serif">Clásica (Serif)</option>
-            <option value="Impact, Charcoal, sans-serif">Impacto (Meme)</option>
-            <option value="'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif">Divertida (Comic)</option>
-            <option value="'Verdana', Geneva, sans-serif">Ancha (Verdana)</option>
-        </select>
+        <div style="display: flex; gap: 5px; margin-top: 5px;">
+            <select id="fuente" style="margin-top: 0; flex-grow: 1;">
+                <option value="default">Por Defecto (Sistema)</option>
+                <option value="'Arial Black', Gadget, sans-serif">Gruesa (Arial Black)</option>
+                <option value="'Courier New', Courier, monospace">Máquina (Courier)</option>
+                <option value="'Brush Script MT', cursive">Manuscrita (Script)</option>
+                <option value="'Times New Roman', Times, serif">Clásica (Serif)</option>
+                <option value="Impact, Charcoal, sans-serif">Impacto (Meme)</option>
+                <option value="'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif">Divertida (Comic)</option>
+                <option value="'Verdana', Geneva, sans-serif">Ancha (Verdana)</option>
+            </select>
+            <button type="button" class="btn-small" onclick="escanearFuentes()" data-lang="btn_detect" style="margin-top: 0; padding: 0 12px; height: 35px; white-space: nowrap;">🔍 Detectar</button>
+        </div>
 
     </div>
 </details>
